@@ -2,8 +2,6 @@
     import { onMount, afterUpdate } from "svelte";
     import maplibregl from "maplibre-gl";
     import development from "../data/development-application.geo.json";
-    import development_address from "../data/development-application-fix.geo.json";
-    import cofa from "../data/c-of-a.geo.json"
     import * as turf from "@turf/turf"; // this is for fitting the map boundary to GTA municipalities
     import positron from "../data/positron.json";
     //import BaseLayer from "../data/pmtiles.json";
@@ -33,18 +31,14 @@
     let results;
 
     // Application Type Filter
-    let allFilter = false;
+    let allFilter = true;
     let ozFilter = false;
     let spaFilter = false;
     let sbFilter = false;
     let plFilter = false;
     let cdFilter = false;
-
-    //Height Filter
-    let highFilter = false;
-    let midFilter = false;
-    let lowFilter = false;
-    let noHFilter = false;
+    let mvFilter = false;
+    let coFilter = false;
 
     //Date Filter
     let oneMonthFilter = false;
@@ -55,7 +49,6 @@
 
     let applicationfilter = [];
     let datefilter = [];
-    let heightfilter = [];
 
     function applicationFilter() {
         applicationfilter = [];
@@ -81,7 +74,27 @@
         if (cdFilter) {
             applicationfilter.push(["==", ["get", "APPLICATION_TYPE"], "CD"]);
         }
+        if (mvFilter) {
+            applicationfilter.push(["==", ["get", "APPLICATION_TYPE"], "MV"]);
+        }
+        if (coFilter) {
+            applicationfilter.push(["==", ["get", "APPLICATION_TYPE"], "CO"]);
+        }
 
+        /* Sorting the filters with other filters, this ensures that filters from the same
+        filter function are sorted together */
+
+        if ((datefilter.length > 0)) {
+            var filter = [
+                "all",
+                ["any", ...applicationfilter],
+                ["any", ...datefilter],
+            ];
+            //console.log("Date", filter)
+        } else {
+            var filter = ["any", ...applicationfilter];
+            //console.log("Application", filter)
+        }
 
         /* When people unclick buttons, sometimes all the points can disappear,
          to solve this problem, we can remove filters with nothing but "any" in there */
@@ -95,88 +108,6 @@
         if (filter.length == 2) {
             //then there
             filter[0] = "any";
-            map.setFilter("development-ID", filter);
-        } else if (filter.length == 1) {
-            // This is to remove all filters when there is just one "any" in the filter
-            map.setFilter("development-ID", null);
-            allFilter = true;
-        } else {
-            map.setFilter("development-ID", filter);
-        }
-    }
-
-    /* filtering height */
-
-    function heightFilter() {
-        map.setFilter("development-select", [
-            "==",
-            ["get", "APPLICATION#"],
-            "",
-        ]);
-        heightfilter = [];
-
-        if (highFilter)
-            heightfilter.push([
-                "==",
-                ["get", "HEIGHT"],
-                "High-rise (15+ Storeys)",
-            ]);
-        if (midFilter)
-            heightfilter.push([
-                "==",
-                ["get", "HEIGHT"],
-                "Mid-rise (5-14 Storeys)",
-            ]);
-        if (lowFilter)
-            heightfilter.push([
-                "==",
-                ["get", "HEIGHT"],
-                "Low-rise (0-4 Storeys)",
-            ]);
-        if (noHFilter)
-            heightfilter.push(["==", ["get", "HEIGHT"], "No Height Info"]);
-
-        if (applicationfilter.length > 0 && datefilter.length == 0) {
-            var filter = [
-                "all",
-                ["any", ...applicationfilter],
-                ["any", ...heightfilter],
-            ];
-            //console.log("Application", filter);
-        } else if ((datefilter.length > 0) & (applicationfilter.length == 0)) {
-            var filter = [
-                "all",
-                ["any", ...heightfilter],
-                ["any", ...datefilter],
-            ];
-            //console.log("Date", filter);
-        } else if (datefilter.length > 0 && applicationfilter.length > 0) {
-            var filter = [
-                "all",
-                ["any", ...applicationfilter],
-                ["any", ...heightfilter],
-                ["any", ...datefilter],
-            ];
-            //console.log("Date & Application", filter);
-        } else {
-            var filter = ["any", ...heightfilter];
-            //console.log("Height", filter);
-        }
-
-        /* When people unclick buttons, sometimes all the points can disappear,
-         to solve this problem, we can remove filters with nothing but "any" in there */
-        for (let i = 0; i < filter.length; i++) {
-            // if the one of the filters in the filter list only has "any" left, then
-            // length is 1, so remove it.
-            if (filter[i].length == 1) {
-                filter.splice(filter.indexOf(filter[i]), 1);
-            }
-        }
-        if (filter.length == 2) {
-            //then there
-
-            filter[0] = "any";
-
             map.setFilter("development-ID", filter);
         } else if (filter.length == 1) {
             // This is to remove all filters when there is just one "any" in the filter
@@ -213,29 +144,14 @@
             datefilter.push(["<=", ["get", "DATE_DISTANCE"], 365.0]);
         }
 
-        if (applicationfilter.length > 0 && heightfilter == 0) {
+        if (applicationfilter.length > 0) {
             var filter = [
                 "all",
                 ["any", ...applicationfilter],
                 ["any", ...datefilter],
             ];
             console.log("Application", filter);
-        } else if (heightfilter.length > 0 && applicationfilter.length == 0) {
-            var filter = [
-                "all",
-                ["any", ...heightfilter],
-                ["any", ...datefilter],
-            ];
-            console.log("Height", filter);
-        } else if (heightfilter.length > 0 && applicationfilter.length > 0) {
-            var filter = [
-                "all",
-                ["any", ...applicationfilter],
-                ["any", ...heightfilter],
-                ["any", ...datefilter],
-            ];
-            console.log("Height & Application", filter);
-        } else {
+        }else {
             var filter = ["any", ...datefilter];
             console.log("Date", filter);
         }
@@ -303,56 +219,12 @@
                     "source-layer": `property_ward_${num}`,
                     "layout": {},
                     "paint": {
-                        "line-color": "grey",
-                        "line-width": 1
+                        "line-color": "#888888", // Border color
+                        "line-width": 0.2, // Border width
                     },
                 });
 
             }
-            /*
-            // committee of adjustment
-            map.addSource("cofa", {
-                type: "geojson",
-                data: cofa,
-            });
-            map.addLayer({
-                id: "cofa-ID",
-                type: "circle",
-                source: "cofa",
-                paint: {
-                    "circle-color": [
-                        "match",
-                        ["get", "APPLICATION_TYPE"],
-                        "OZ",
-                        "#1e3765",
-                        "SA",
-                        "#2a6f97",
-                        "red",
-                    ],
-                    "circle-radius": 8,
-                },
-            });
-            map.addLayer({
-                id: "cofa-select",
-                type: "circle",
-                source: "cofa",
-                filter: ["==", ["get", "APPLICATION#"], ""],
-                paint: {
-                    "circle-color": [
-                        "match",
-                        ["get", "APPLICATION_TYPE"],
-                        "OZ",
-                        "#1e3765",
-                        "SA",
-                        "#2a6f97",
-                        "black",
-                    ],
-                    "circle-radius": 5,
-                    "circle-stroke-color": "red",
-                    "circle-stroke-width": 2,
-                },
-            });*/
-
 
             map.addSource("development", {
                 type: "geojson",
@@ -370,6 +242,8 @@
                         "#1e3765",
                         "SA",
                         "#2a6f97",
+                        "MV",
+                        "#DAA520",
                         "#a9d6e5",
                     ],
                     "circle-radius": 5,
@@ -381,15 +255,8 @@
                 source: "development",
                 filter: ["==", ["get", "APPLICATION#"], ""],
                 paint: {
-                    "circle-color": [
-                        "match",
-                        ["get", "APPLICATION_TYPE"],
-                        "OZ",
-                        "#1e3765",
-                        "SA",
-                        "#2a6f97",
-                        "#a9d6e5",
-                    ],
+                    "circle-color": '#000000',
+                    "circle-opacity": 0,
                     "circle-radius": 5,
                     "circle-stroke-color": "red",
                     "circle-stroke-width": 2,
@@ -402,24 +269,7 @@
                     e.features[0].properties.Aream2,
                 );
             });
-            /*
-            for (let i = 0; i < 25; i++) {
-                map.addSource("ABC", {
-                    type: "geojson",
-                    data: wards[i],
-                });
 
-                map.addLayer({
-                    id: `ward-${i+1}`,
-                    type: "line",
-                    source: "uppertier",
-                    layout: {},
-                    paint: {
-                        "line-color": "grey", // Border color
-                        "line-width": 3, // Border width
-                    },
-                });
-            }*/
         });
 
         // Boundary of map
@@ -435,7 +285,6 @@
         map.on("mouseleave", "development-ID", () => {
             map.getCanvas().style.cursor = "";
         });
-
 
         map.on("click", "development-ID", (e) => {
             const tolerance = 0.0; // Adjust the tolerance as needed
@@ -467,71 +316,28 @@
                 application.push(point.properties["APPLICATION#"]);
                 description.push(point.properties.DESCRIPTION);
                 application_url.push(point.properties.APPLICATION_URL);
-                submission_date.push(point.properties.DATE);
+                submission_date.push(point.properties.DATE_SUBMITTED);
             });
-
-            map.setFilter("development-select", [
+            if (application[0] != null){
+                map.setFilter("development-select", [
                 "==",
                 ["get", "APPLICATION#"],
                 application[0],
             ]);
 
-            //$: title = e.features[0].properties.CSDNAME;
-
-            popupContent = true;
-        });
-        /*
-        map.on("mouseenter", "cofa-ID", () => {
-            map.getCanvas().style.cursor = "pointer";
-        });
-
-        map.on("mouseleave", "cofa-ID", () => {
-            map.getCanvas().style.cursor = "";
-        });
-
-        
-        map.on("click", "cofa-ID", (e) => {
-            const tolerance = 0.0; // Adjust the tolerance as needed
-            const clickedPoint = e.point;
-
-            // Find all points within the tolerance radius of the clicked point
-            const overlappingPoints = map.queryRenderedFeatures(
-                [
-                    [clickedPoint.x - tolerance, clickedPoint.y - tolerance],
-                    [clickedPoint.x + tolerance, clickedPoint.y + tolerance],
-                ],
-
-                { layers: ["cofa-ID"] },
-            );
-            // clear the lists first, so old values don't interfere
-            address = [];
-            info = [];
-            height = [];
-            application = [];
-            description = [];
-            application_url = [];
-            submission_date = [];
-
-            // Process the overlapping points
-            overlappingPoints.forEach((point) => {
-                address.push(point.properties.ADDRESS_FULL);
-                info.push(point.properties.INFO);
-                application.push(point.properties.REFERENCE_FILE);
-                description.push(point.properties.DESCRIPTION);
-                application_url.push(point.properties.APPLICATION_URL);
-                submission_date.push(point.properties.IN_DATE);
-            });
-
-            map.setFilter("cofa-select", [
+            } else {
+                map.setFilter("development-select", [
                 "==",
-                ["get", "APPLICATION#"],
-                application[0],
+                ["get", "STREET"],
+                address[0],
             ]);
-
+            }
+            
+            console.log(application)
             //$: title = e.features[0].properties.CSDNAME;
 
             popupContent = true;
-        });*/
+        });
     });
     // Geocoder for people to input their address and zoom to input address
     const baseUrl =
@@ -544,10 +350,12 @@
         if (results.length > 0) {
             //this is to remove the previous address point searched (if true)
             if (map.getSource(`address ${lon}`)) {
-                map.removeSource(`address ${lon}`);
+                
                 map.removeLayer(`address-layer ${lon}`);
-                map.removeSource(`buffer ${lon} ${dist}`);
+                map.removeSource(`address ${lon}`);
+                
                 map.removeLayer(`buffer-layer ${lon} ${dist}`);
+                map.removeSource(`buffer ${lon} ${dist}`);
             }
             if (distance == "") {
                 distance = 500;
@@ -630,7 +438,7 @@
     <div class="info-panel">
         <h1>Application Information Centre</h1>
 
-        <p>Last Updated: July 26, 2024</p>
+        <p>Last Updated: July 31, 2024</p>
 
         <!-- THIS BUTTON ALLOWS PEOPLE TO SELECT DEVELOPMENT APPLICATION TYPES-->
         <div class="buttons-box">
@@ -639,19 +447,27 @@
                 class="application-button"
                 on:click={() => {
                     allFilter = !allFilter;
-                    map.setFilter("development-ID", null);
+                    console.log(allFilter)
+                    if (allFilter == true){
+                        map.setFilter("development-ID", null);
+                    } else {
+                        map.setFilter("development-ID", ["==",
+                        ["get", "APPLICATION#"],
+                        "",]);
+                        map.setFilter("development-select", ["==",
+                        ["get", "APPLICATION#"],
+                        "",]);
+                    }
+                    
                     applicationfilter = [];
                     datefilter = [];
-                    heightfilter = [];
                     ozFilter = false;
                     spaFilter = false;
                     cdFilter = false;
                     sbFilter = false;
                     plFilter = false;
-                    highFilter = false;
-                    midFilter = false;
-                    lowFilter = false;
-                    noHFilter = false;
+                    mvFilter = false;
+                    coFilter = false;
                     oneMonthFilter = false;
                     twoMonthFilter = false;
                     threeMonthFilter = false;
@@ -693,7 +509,7 @@
                 }}
                 style="background-color: {cdFilter
                     ? '#a9d6e5'
-                    : ''}; color: 'black'">DRAFT CONDO</button
+                    : ''}; color: {cdFilter ? 'black' : 'black'}">DRAFT CONDO</button
             ><button
                 class="application-button"
                 on:click={() => {
@@ -703,7 +519,7 @@
                 }}
                 style="background-color: {sbFilter
                     ? '#a9d6e5'
-                    : ''}; color: 'black'">SUBDIVISION</button
+                    : ''}; color: {sbFilter ? 'black' : 'black'}">SUBDIVISION</button
             ><button
                 class="application-button"
                 on:click={() => {
@@ -711,9 +527,25 @@
                     allFilter = false;
                     applicationFilter();
                 }}
-                style="background-color: {plFilter ? '#a9d6e5' : ''}">PL</button
+                style="background-color: {plFilter ? '#a9d6e5' : ''}; color: {plFilter ? 'black' : 'black'}">PL</button
+            > <button
+            class="application-button"
+            on:click={() => {
+                mvFilter = !mvFilter;
+                allFilter = false;
+                applicationFilter();
+            }}
+            style="background-color: {mvFilter ? '#DAA520' : ''}; color: {mvFilter ? 'white' : 'black'}">MV</button
+                > <button
+                class="application-button"
+                on:click={() => {
+                    coFilter = !coFilter;
+                    allFilter = false;
+                    applicationFilter();
+                }}
+                style="background-color: {coFilter ? '#a9d6e5' : ''}; color: {coFilter ? 'black' : 'black'}">CO</button
             > <br />
-
+            
             <!--SEARCH BY DATE-->
             <h3>Filter By Date</h3>
             <button
@@ -817,6 +649,7 @@
                     <p>
                         {submission_date[i]} <br />
                         {info[i]} <br />
+                        {height[i]}
                     </p>
                     <p>{description[i]}</p>
                     <p></p>
@@ -924,6 +757,7 @@
         width: auto;
         height: 28px;
         left: 10px;
+        color: black;
         margin-right: 5px;
         margin-bottom: 5px;
         border-width: 0px;
@@ -954,7 +788,7 @@
         width: 24%;
         height: 28px;
 
-        border-width: 1px;
+        border-width: 0px;
         margin-right: 5px;
 
         font-weight: bold;
