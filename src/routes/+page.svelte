@@ -17,7 +17,6 @@
     let map;
     let address = [];
     let info = [];
-    let height = [];
     let application = [];
     let description = [];
     let application_url = [];
@@ -302,7 +301,6 @@
             // clear the lists first, so old values don't interfere
             address = [];
             info = [];
-            height = [];
             application = [];
             description = [];
             application_url = [];
@@ -312,7 +310,6 @@
             overlappingPoints.forEach((point) => {
                 address.push(point.properties.STREET);
                 info.push(point.properties.INFO);
-                height.push(point.properties.HEIGHT);
                 application.push(point.properties["APPLICATION#"]);
                 description.push(point.properties.DESCRIPTION);
                 application_url.push(point.properties.APPLICATION_URL);
@@ -646,11 +643,10 @@
                             >
                         </h3>
                     {/if}
-                    <p>
-                        {submission_date[i]} <br />
-                        {info[i]} <br />
-                        {height[i]}
-                    </p>
+                    <p>{submission_date[i]} <br />
+                        {info[i]} <br /></p>
+                        
+                    
                     <p>{description[i]}</p>
                     <p></p>
                 </div>
