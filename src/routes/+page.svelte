@@ -432,10 +432,10 @@
 <main>
     <div id="map" class="map" />
 
-    <div class="info-panel">
+    <div class="info-panel"> 
         <h1>Application Information Centre</h1>
 
-        <p>Last Updated: October 26, 2024</p>
+        <p>Last Updated: January 10, 2025</p>
 
         <!-- THIS BUTTON ALLOWS PEOPLE TO SELECT DEVELOPMENT APPLICATION TYPES-->
         <div class="buttons-box">
