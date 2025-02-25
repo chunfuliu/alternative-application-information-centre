@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@turf/turf": "^7.0.0",
 		"maplibre-gl": "^4.5.0",
+		"maplibre-gl-vector-text-protocol": "^0.0.5",
 		"pmtiles": "^3.0.7"
 	}
 }
