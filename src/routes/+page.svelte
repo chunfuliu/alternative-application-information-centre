@@ -1,16 +1,12 @@
 <script>
     import { onMount, afterUpdate } from "svelte";
     import maplibregl from "maplibre-gl";
-    import pkg from 'maplibre-gl-vector-text-protocol';
-    
 
     import development from "../data/development-application.geo.json";
     import * as turf from "@turf/turf"; // this is for fitting the map boundary to GTA municipalities
     import positron from "../data/positron.json";
-    //import BaseLayer from "../data/pmtiles.json";
     import * as pmtiles from "pmtiles";
 
-    const {registerProtocol} = pkg;
     /*
     var wards = [ward1,ward2,ward3,ward4,ward5,ward6,ward7,ward8,ward9,ward10,ward11,ward12,ward13,ward14,ward15,ward16,ward17,ward18,ward19,
     ward20,ward21,ward22,ward23,ward24,ward25]
@@ -442,7 +438,7 @@
     <div class="info-panel"> 
         <h1>Application Information Centre</h1>
 
-        <p>Last Updated: January 10, 2025</p>
+        <p>Last Updated: February 24, 2025</p>
 
         <!-- THIS BUTTON ALLOWS PEOPLE TO SELECT DEVELOPMENT APPLICATION TYPES-->
         <div class="buttons-box">
