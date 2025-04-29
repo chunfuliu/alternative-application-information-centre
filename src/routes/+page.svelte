@@ -438,7 +438,7 @@
     <div class="info-panel"> 
         <h1>Application Information Centre</h1>
 
-        <p>Last Updated: February 24, 2025</p>
+        <p>Last Updated: April 28, 2025</p>
 
         <!-- THIS BUTTON ALLOWS PEOPLE TO SELECT DEVELOPMENT APPLICATION TYPES-->
         <div class="buttons-box">
