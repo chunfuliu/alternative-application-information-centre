@@ -358,7 +358,7 @@
                 distance = 500;
             }
             dist = distance;
-            //get long - lat
+            //get long - latf
             lat = +results[0].lat;
             lon = +results[0].lon;
 
