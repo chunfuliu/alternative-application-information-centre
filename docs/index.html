@@ -1,25 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="./favicon.svg" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		
-		<link href="./_app/immutable/assets/2.tpuuiAyk.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.D5nZWBid.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/entry.dJ_CHgab.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.BvLojk_z.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.D7fixNOE.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.BQJOlMnr.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/0.C3bVIIRG.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/2.Bhf6EgsW.js">
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">  <main class="svelte-d5k1wg"><div id="map" class="map svelte-d5k1wg"></div> <div class="info-panel svelte-d5k1wg"><h1 class="svelte-d5k1wg" data-svelte-h="svelte-1xkqu6j">Application Information Centre</h1> <p class="svelte-d5k1wg" data-svelte-h="svelte-ke4db6">Last Updated: March 22, 2026</p>  <div class="buttons-box svelte-d5k1wg"><h3 class="svelte-d5k1wg" data-svelte-h="svelte-p3oodj">Filter By Application Type</h3> <button class="application-button svelte-d5k1wg" style="background-color: #1e3765; color: white">ALL</button> <button class="application-button svelte-d5k1wg" style="background-color: ; color: black">OPA &amp; ZBA</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: black">SITE PLAN</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: black">DRAFT CONDO</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: black">SUBDIVISION</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: black">PL</button> <button class="application-button svelte-d5k1wg" style="background-color: ; color: black">MV</button> <button class="application-button svelte-d5k1wg" style="background-color: ; color: black">CO</button> <br class="svelte-d5k1wg">  <h3 class="svelte-d5k1wg" data-svelte-h="svelte-9tuc0l">Filter By Date</h3> <button class="application-button svelte-d5k1wg" style="background-color: ; color: 'black'">1 Month</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: 'black'">2 Months</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: 'black'">3 Months</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: 'black'">6 Months</button><button class="application-button svelte-d5k1wg" style="background-color: ; color: 'black'">12 Months</button></div> <h3 class="svelte-d5k1wg" data-svelte-h="svelte-hcv7yp"><b class="svelte-d5k1wg">Search Address</b></h3> <input placeholder="i.e. 100 St George St" class="svelte-d5k1wg" value=""> <input placeholder="i.e. 500, distance is in meters" class="svelte-d5k1wg" value=""> <br class="svelte-d5k1wg"> <button class="address-button svelte-d5k1wg" disabled>Search</button> </div> </main> 
-			
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="./favicon.svg" />
+	<meta name="viewport" content="width=device-width" />
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<title>Alternative-Application-Information-Centre</title>
+	
+		<link href="./_app/immutable/assets/2.D35sLVxg.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.HvAX5dU5.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/entry.DJQki0ju.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.W2pu3yam.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.C8w2Dmey.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.DMQO2YyS.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/0.CUcg_Z_Z.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/2.9KRDCKDC.js">
+
+	<meta name="description" content="Visualizing Development Applications in Toronto">
+	<meta name="author" content="Michael Liu">
+
+	<meta property="og:title" content="alternative-application-information-centre" />
+	<meta name="og:description" content="Visualizing Development Applications in Toronto" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://planning-toronto.github.io/tod-toronto-1996-to-2021" />
+	<meta property="og:image" content="https://planning-toronto.github.io/tod-toronto-1996-to-2021/web-card.png" />
+	<meta property="og:locale" content="en_CA">
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="https://planning-toronto.github.io/tod-toronto-1996-to-2021" />
+
+	<meta name="twitter:title" content="alternative-application-information-centre" />
+	<meta name="twitter:description" content="Visualizing demographic and housing changes along Toronto's major transit lines" />
+	<meta name="twitter:image" content="https://planning-toronto.github.io/tod-toronto-1996-to-2021/web-card.png" />
+</head>
+
+<body>
 			<script>
 				{
-					__sveltekit_wlvz6g = {
+					__sveltekit_1ibdzln = {
 						base: new URL(".", location).pathname.slice(0, -1),
 						assets: "/alternative-application-information-centre"
 					};
@@ -29,8 +48,8 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.D5nZWBid.js"),
-						import("./_app/immutable/entry/app.D7fixNOE.js")
+						import("./_app/immutable/entry/start.HvAX5dU5.js"),
+						import("./_app/immutable/entry/app.C8w2Dmey.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
@@ -42,5 +61,6 @@
 				}
 			</script>
 		</div>
-	</body>
+</body>
+
 </html>
